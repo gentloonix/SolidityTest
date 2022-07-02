@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Address.sol";
 
 contract Proxy {
-    address public immutable admin; // consider storage slot
+    address public immutable admin; // consider ERC1976
 
-    mapping(bytes32 => bytes32) public codeHashBySalt; // consider storage slot
+    mapping(bytes32 => bytes32) public codeHashBySalt; // consider ERC1976
 
     constructor() {
         admin = msg.sender;
