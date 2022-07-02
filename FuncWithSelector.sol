@@ -8,7 +8,7 @@ contract FuncWithSelector {
         pure
         returns (bytes4 selector, bytes32 selectorWord)
     {
-        bytes memory fn = "testProxy()";
+        bytes memory fn = "testProxy()"; // use bytes over bytes32 to avoid accidential trimming
         selector = bytes4(keccak256(abi.encodePacked(fn)));
         assembly {
             selectorWord := mload(add(fn, 32))
