@@ -31,7 +31,13 @@ contract Proxy {
         public
         onlyAdmin
         returns (address addr, bytes32 salt)
-    {}
+    {
+        salt = keccak256(abi.encodePacked(selector, code));
+        assembly {
+            addr := create2(0, add(code, 32), mload(code), salt)
+        }
+        return (addr, salt);
+    }
 
     // Retrieves the selector from calldata and the corresponding salt.
     function _getSaltAndSelector()
