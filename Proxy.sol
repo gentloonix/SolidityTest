@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 contract Proxy {
     address public immutable admin;
 
-    mapping(bytes32 => bytes32) public codeHashBySalt;
+    mapping(bytes32 => address) public addressBySalt;
 
     constructor() {
         admin = msg.sender;
@@ -33,9 +33,14 @@ contract Proxy {
         returns (address addr, bytes32 salt)
     {
         salt = keccak256(abi.encodePacked(selector, code));
+        require(
+            addressBySalt[salt] == address(0),
+            "Proxy register():: already registered"
+        );
         assembly {
             addr := create2(0, add(code, 32), mload(code), salt)
         }
+        addressBySalt[salt] = addr;
         return (addr, salt);
     }
 
