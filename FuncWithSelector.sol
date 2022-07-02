@@ -8,8 +8,12 @@ contract FuncWithSelector {
         pure
         returns (bytes4 selector, bytes32 selectorWord)
     {
-        selector = 0xb4e81320;
-        selectorWord = keccak256(abi.encodePacked("testProxy()"));
+        bytes memory fn = "testProxy()";
+        selector = bytes4(keccak256(abi.encodePacked(fn)));
+        assembly {
+            selectorWord := mload(add(fn, 32))
+        }
+        return (selector, selectorWord);
     }
 
     function testMulticall()
@@ -17,8 +21,12 @@ contract FuncWithSelector {
         pure
         returns (bytes4 selector, bytes32 selectorWord)
     {
-        selector = 0xbe13bddb;
-        selectorWord = keccak256(abi.encodePacked("testMulticall()"));
+        bytes memory fn = "testMulticall()";
+        selector = bytes4(keccak256(abi.encodePacked(fn)));
+        assembly {
+            selectorWord := mload(add(fn, 32))
+        }
+        return (selector, selectorWord);
     }
 
     function testMulticall1()
@@ -26,7 +34,11 @@ contract FuncWithSelector {
         pure
         returns (bytes4 selector, bytes32 selectorWord)
     {
-        selector = 0xe4382903;
-        selectorWord = keccak256(abi.encodePacked("testMulticall1()"));
+        bytes memory fn = "testMulticall1()";
+        selector = bytes4(keccak256(abi.encodePacked(fn)));
+        assembly {
+            selectorWord := mload(add(fn, 32))
+        }
+        return (selector, selectorWord);
     }
 }
