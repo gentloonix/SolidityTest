@@ -19,7 +19,7 @@ contract Proxy {
 
     // Receive ETH
     receive() external payable {
-        execute();
+        _execute();
     }
 
     // Delegates the call based on selector and salt.
@@ -28,14 +28,7 @@ contract Proxy {
         // Compute address of registered function.
         // See https://solidity.readthedocs.io/en/v0.7.4/control-structures.html#salted-contract-creations-create2
         // Execute call. Revert on failure or return on success.
-        execute();
-    }
-
-    function execute() private {
-        (bytes32 salt, ) = _getSaltAndSelector();
-        address target = addressBySalt[salt];
-        require(target != address(0), "Proxy fallback():: not registered");
-        Address.functionDelegateCall(target, msg.data);
+        _execute();
     }
 
     // Registers a new function selector and its corresponding code.
@@ -65,5 +58,12 @@ contract Proxy {
         selector = bytes4(msg.data);
         salt = keccak256(abi.encodePacked(selector));
         return (salt, selector);
+    }
+
+    function _execute() private {
+        (bytes32 salt, ) = _getSaltAndSelector();
+        address target = addressBySalt[salt];
+        require(target != address(0), "Proxy fallback():: not registered");
+        Address.functionDelegateCall(target, msg.data);
     }
 }
