@@ -47,10 +47,10 @@ contract Proxy {
         view
         returns (address target)
     {
-        bytes32 h = keccak256(
+        bytes32 addr = keccak256(
             abi.encodePacked(bytes1(0xff), address(this), salt, codeHash)
         );
-        return address(uint160(uint256(h)));
+        return address(uint160(uint256(addr)));
     }
 
     function _execute() private {
