@@ -91,6 +91,8 @@ contract Proxy {
             addr := create2(0, add(code, 32), mload(code), salt)
         }
 
+        require(addr != address(0), "Proxy register():: create2");
+
         return (addr, salt);
     }
 }
