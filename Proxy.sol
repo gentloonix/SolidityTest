@@ -32,7 +32,7 @@ contract Proxy {
         onlyAdmin
         returns (address addr, bytes32 salt)
     {
-        salt = keccak256(abi.encodePacked(selector, code));
+        salt = keccak256(abi.encodePacked(selector));
         require(
             addressBySalt[salt] == address(0),
             "Proxy register():: already registered"
