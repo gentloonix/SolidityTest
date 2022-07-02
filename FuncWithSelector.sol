@@ -8,10 +8,10 @@ contract FuncWithSelector {
         pure
         returns (bytes4 selector, bytes32 selectorWord)
     {
-        bytes memory fn = "testProxy()"; // use bytes over bytes32 to avoid accidential trimming
-        selector = bytes4(keccak256(abi.encodePacked(fn)));
+        bytes memory bSelectorWord = "testProxy()"; // use bytes over bytes32 to avoid accidential trimming
+        selector = bytes4(keccak256(bSelectorWord));
         assembly {
-            selectorWord := mload(add(fn, 32))
+            selectorWord := mload(add(bSelectorWord, 32))
         }
         return (selector, selectorWord);
     }
@@ -21,10 +21,10 @@ contract FuncWithSelector {
         pure
         returns (bytes4 selector, bytes32 selectorWord)
     {
-        bytes memory fn = "testMulticall()";
-        selector = bytes4(keccak256(abi.encodePacked(fn)));
+        bytes memory bSelectorWord = "testMulticall()";
+        selector = bytes4(keccak256(bSelectorWord));
         assembly {
-            selectorWord := mload(add(fn, 32))
+            selectorWord := mload(add(bSelectorWord, 32))
         }
         return (selector, selectorWord);
     }
@@ -34,10 +34,10 @@ contract FuncWithSelector {
         pure
         returns (bytes4 selector, bytes32 selectorWord)
     {
-        bytes memory fn = "testMulticall1()";
-        selector = bytes4(keccak256(abi.encodePacked(fn)));
+        bytes memory bSelectorWord = "testMulticall1()";
+        selector = bytes4(keccak256(bSelectorWord));
         assembly {
-            selectorWord := mload(add(fn, 32))
+            selectorWord := mload(add(bSelectorWord, 32))
         }
         return (selector, selectorWord);
     }

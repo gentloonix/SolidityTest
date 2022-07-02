@@ -78,7 +78,7 @@ contract Proxy {
             "Proxy register():: already registered"
         );
 
-        codeHashBySalt[salt] = keccak256(abi.encodePacked(code));
+        codeHashBySalt[salt] = keccak256(code);
         assembly {
             addr := create2(0, add(code, 32), mload(code), salt)
         }
