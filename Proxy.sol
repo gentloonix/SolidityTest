@@ -6,14 +6,14 @@ import "@openzeppelin/contracts/utils/Address.sol";
 contract Proxy {
     address public immutable admin;
 
-    mapping(bytes32 => address) public addressBySalt;
+    mapping(bytes32 => bytes32) public codeHashBySalt;
 
     constructor() {
         admin = msg.sender;
     }
 
     modifier onlyAdmin() {
-        require(msg.sender == admin, "Only admin");
+        require(msg.sender == admin, "Proxy:: only admin");
         _;
     }
 
@@ -31,24 +31,6 @@ contract Proxy {
         _execute();
     }
 
-    // Registers a new function selector and its corresponding code.
-    function register(bytes4 selector, bytes memory code)
-        public
-        onlyAdmin
-        returns (address addr, bytes32 salt)
-    {
-        salt = keccak256(abi.encodePacked(selector));
-        require(
-            addressBySalt[salt] == address(0),
-            "Proxy register():: already registered"
-        );
-        assembly {
-            addr := create2(0, add(code, 32), mload(code), salt)
-        }
-        addressBySalt[salt] = addr;
-        return (addr, salt);
-    }
-
     // Retrieves the selector from calldata and the corresponding salt.
     function _getSaltAndSelector()
         internal
@@ -60,10 +42,46 @@ contract Proxy {
         return (salt, selector);
     }
 
+    function _computeAddress(bytes32 salt, bytes32 codeHash)
+        internal
+        view
+        returns (address target)
+    {
+        bytes32 h = keccak256(
+            abi.encodePacked(bytes1(0xff), address(this), salt, codeHash)
+        );
+        return address(uint160(uint256(h)));
+    }
+
     function _execute() private {
         (bytes32 salt, ) = _getSaltAndSelector();
-        address target = addressBySalt[salt];
-        require(target != address(0), "Proxy fallback():: not registered");
+        bytes32 codeHash = codeHashBySalt[salt];
+
+        require(codeHash != bytes32(0), "Proxy fallback():: not registered");
+
+        address target = _computeAddress(salt, codeHash);
+
+        // TODO use low level
         Address.functionDelegateCall(target, msg.data);
+    }
+
+    // Registers a new function selector and its corresponding code.
+    function register(bytes4 selector, bytes memory code)
+        public
+        onlyAdmin
+        returns (address addr, bytes32 salt)
+    {
+        salt = keccak256(abi.encodePacked(selector));
+
+        require(
+            codeHashBySalt[salt] == bytes32(0),
+            "Proxy register():: already registered"
+        );
+
+        codeHashBySalt[salt] = keccak256(abi.encodePacked(code));
+        assembly {
+            addr := create2(0, add(code, 32), mload(code), salt)
+        }
+        return (addr, salt);
     }
 }
