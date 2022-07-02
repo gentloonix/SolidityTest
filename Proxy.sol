@@ -4,9 +4,9 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/utils/Address.sol";
 
 contract Proxy {
-    address public immutable admin;
+    address public immutable admin; // consider storage slot
 
-    mapping(bytes32 => bytes32) public codeHashBySalt;
+    mapping(bytes32 => bytes32) public codeHashBySalt; // consider storage slot
 
     constructor() {
         admin = msg.sender;
@@ -61,8 +61,15 @@ contract Proxy {
 
         address target = _computeAddress(salt, codeHash);
 
-        // TODO use low level
-        Address.functionDelegateCall(target, msg.data);
+        assembly {
+            calldatacopy(0, 0, calldatasize())
+            let ok := delegatecall(gas(), target, 0, calldatasize(), 0, 0)
+            returndatacopy(0, 0, returndatasize())
+            if eq(ok, 0) {
+                revert(0, returndatasize())
+            }
+            return(0, returndatasize())
+        }
     }
 
     // Registers a new function selector and its corresponding code.
@@ -79,9 +86,11 @@ contract Proxy {
         );
 
         codeHashBySalt[salt] = keccak256(code);
+
         assembly {
             addr := create2(0, add(code, 32), mload(code), salt)
         }
+
         return (addr, salt);
     }
 }
