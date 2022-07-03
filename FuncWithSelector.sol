@@ -12,7 +12,7 @@ contract FuncWithSelector {
         bytes memory bSelectorWord = "testProxy()";
         selector = bytes4(keccak256(bSelectorWord));
         assembly {
-            selectorWord := mload(add(bSelectorWord, 32))
+            selectorWord := mload(add(bSelectorWord, 0x20))
         }
         return (selector, selectorWord);
     }
@@ -25,7 +25,7 @@ contract FuncWithSelector {
         bytes memory bSelectorWord = "testMulticall()";
         selector = bytes4(keccak256(bSelectorWord));
         assembly {
-            selectorWord := mload(add(bSelectorWord, 32))
+            selectorWord := mload(add(bSelectorWord, 0x20))
         }
         return (selector, selectorWord);
     }
@@ -38,7 +38,7 @@ contract FuncWithSelector {
         bytes memory bSelectorWord = "testMulticall1()";
         selector = bytes4(keccak256(bSelectorWord));
         assembly {
-            selectorWord := mload(add(bSelectorWord, 32))
+            selectorWord := mload(add(bSelectorWord, 0x20))
         }
         return (selector, selectorWord);
     }
