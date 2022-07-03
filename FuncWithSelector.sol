@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 
 contract FuncWithSelector {
-    // When written in solidity, this will have the desired effect.
     function testProxy()
         public
         pure
