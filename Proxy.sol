@@ -76,6 +76,7 @@ contract Proxy {
     // Registers a new function selector and its corresponding code.
     function register(bytes4 selector, bytes memory code)
         public
+        payable
         onlyAdmin
         returns (address addr, bytes32 salt)
     {
@@ -88,8 +89,9 @@ contract Proxy {
 
         codeHashBySalt[salt] = keccak256(code);
 
+        uint256 value = msg.value;
         assembly {
-            addr := create2(0, add(code, 32), mload(code), salt)
+            addr := create2(value, add(code, 32), mload(code), salt)
         }
 
         require(addr != address(0), "Proxy register():: create2");
