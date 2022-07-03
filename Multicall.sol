@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 pragma abicoder v2;
 
 contract Multicall {
+    // NOTE exploitable multiple payable, use address(this).balance not msg.value
     function multicall(bytes[] calldata data)
         public
         payable
