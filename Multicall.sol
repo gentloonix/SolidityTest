@@ -19,7 +19,7 @@ contract Multicall {
                 // section based on https://ethereum.stackexchange.com/a/83577
                 // If the _res length is less than 68, then the transaction failed silently (without a revert message)
                 if (result.length < 68)
-                    revert("unknown low-level delegate call failure");
+                    revert("Multicall:: low-level delegatecall");
 
                 assembly {
                     // Slice the sighash.
