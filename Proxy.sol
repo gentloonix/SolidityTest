@@ -91,7 +91,7 @@ contract Proxy {
 
         uint256 value = msg.value;
         assembly {
-            addr := create2(value, add(code, 32), mload(code), salt)
+            addr := create2(value, add(code, 0x20), mload(code), salt)
         }
 
         require(addr != address(0), "Proxy register():: create2");
