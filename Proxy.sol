@@ -6,7 +6,7 @@ contract Proxy {
     bytes32 public constant ADMIN_SLOT =
         0x77ea5b78a94496fa612fecea03b8ff8bc74d0e5c95428dc952709b4acb9365e5;
 
-    mapping(bytes32 => bytes32) public codeHashBySalt; // consider ERC1976
+    mapping(bytes32 => bytes32) public codeHashBySalt;
 
     constructor() {
         assert(ADMIN_SLOT == keccak256("ebs369.proxy.admin"));
