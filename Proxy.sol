@@ -24,10 +24,6 @@ contract Proxy {
 
     // Delegates the call based on selector and salt.
     fallback() external payable {
-        // Get selector / contract salt.
-        // Compute address of registered function.
-        // See https://solidity.readthedocs.io/en/v0.7.4/control-structures.html#salted-contract-creations-create2
-        // Execute call. Revert on failure or return on success.
         _execute();
     }
 
@@ -56,13 +52,16 @@ contract Proxy {
 
     // Execute
     function _execute() private {
+        // Get selector / contract salt.
         (bytes32 salt, ) = _getSaltAndSelector();
         bytes32 codeHash = codeHashBySalt[salt];
 
         require(codeHash != bytes32(0), "Proxy fallback():: not registered");
 
+        // Compute address of registered function.
         address target = _computeAddress(salt, codeHash);
 
+        // Execute call. Revert on failure or return on success.
         assembly {
             calldatacopy(0, 0, calldatasize())
             let ok := delegatecall(gas(), target, 0, calldatasize(), 0, 0)
