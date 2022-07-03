@@ -2,16 +2,28 @@
 pragma solidity ^0.8.0;
 
 contract Proxy {
-    address public immutable admin; // consider ERC1976
+    // ERC1967
+    bytes32 public constant ADMIN_SLOT =
+        0x77ea5b78a94496fa612fecea03b8ff8bc74d0e5c95428dc952709b4acb9365e5;
 
     mapping(bytes32 => bytes32) public codeHashBySalt; // consider ERC1976
 
     constructor() {
-        admin = msg.sender;
+        assert(ADMIN_SLOT == keccak256("ebs369.proxy.admin"));
+        bytes32 adminSlot = ADMIN_SLOT;
+        address adminAddr = msg.sender;
+        assembly {
+            sstore(adminSlot, adminAddr)
+        }
     }
 
     modifier onlyAdmin() {
-        require(msg.sender == admin, "Proxy:: only admin");
+        bytes32 adminSlot = ADMIN_SLOT;
+        address adminAddr;
+        assembly {
+            adminAddr := sload(adminSlot)
+        }
+        require(msg.sender == adminAddr, "Proxy:: only admin");
         _;
     }
 
