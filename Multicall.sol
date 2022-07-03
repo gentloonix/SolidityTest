@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 pragma abicoder v2;
 
@@ -11,6 +11,7 @@ contract Multicall {
     {
         uint256 dataLength = data.length;
         results = new bytes[](dataLength);
+
         for (uint256 i = 0; i < dataLength; ++i) {
             (bool success, bytes memory result) = address(this).delegatecall(
                 data[i]
@@ -21,7 +22,6 @@ contract Multicall {
                 // If the _res length is less than 68, then the transaction failed silently (without a revert message)
                 if (result.length < 68)
                     revert("Multicall:: low-level delegatecall");
-
                 assembly {
                     // Slice the sighash.
                     result := add(result, 0x04)
@@ -31,6 +31,7 @@ contract Multicall {
 
             results[i] = result;
         }
+
         return results;
     }
 }
