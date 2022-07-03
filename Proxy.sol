@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract Proxy {
-    // ERC1967
+    // EIP1967
     bytes32 public constant ADMIN_SLOT =
         0x77ea5b78a94496fa612fecea03b8ff8bc74d0e5c95428dc952709b4acb9365e5;
 
