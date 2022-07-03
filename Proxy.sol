@@ -42,6 +42,7 @@ contract Proxy {
         return (salt, selector);
     }
 
+    // Compute address (create2) from salt and code hash
     function _computeAddress(bytes32 salt, bytes32 codeHash)
         internal
         view
@@ -53,6 +54,7 @@ contract Proxy {
         return address(uint160(uint256(addr)));
     }
 
+    // Execute
     function _execute() private {
         (bytes32 salt, ) = _getSaltAndSelector();
         bytes32 codeHash = codeHashBySalt[salt];
