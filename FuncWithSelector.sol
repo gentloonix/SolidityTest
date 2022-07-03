@@ -8,7 +8,8 @@ contract FuncWithSelector {
         pure
         returns (bytes4 selector, bytes32 selectorWord)
     {
-        bytes memory bSelectorWord = "testProxy()"; // use bytes over bytes32 to avoid accidential trimming
+        // dynamic length, no trimming
+        bytes memory bSelectorWord = "testProxy()";
         selector = bytes4(keccak256(bSelectorWord));
         assembly {
             selectorWord := mload(add(bSelectorWord, 32))
